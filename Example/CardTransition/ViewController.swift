@@ -2,23 +2,23 @@
 //  ViewController.swift
 //  CardTransition
 //
-//  Created by HiroteruWatanabe on 04/04/2019.
-//  Copyright (c) 2019 HiroteruWatanabe. All rights reserved.
+//  Created by HiroteruWatanabe on 2019/04/05.
+//  Copyright © 2019 HiroteruWatanabe. All rights reserved.
 //
 
 import UIKit
+import CardTransition
 
-class ViewController: UIViewController {
-
+class ViewController: CardTransitionTabBarController {
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        if let cardViewController = UIStoryboard(name: "CardViewController", bundle: nil).instantiateViewController(withIdentifier: "CardViewController") as? CardViewController {
+            let _ = cardViewController.view
+            setCardViewController(cardViewController)
+        }
+        
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
+    
 }
 
