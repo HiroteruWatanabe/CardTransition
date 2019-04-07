@@ -10,38 +10,9 @@ import UIKit
 
 open class CardTransitionTabBarController: UITabBarController {
     
-    enum CardState {
+    public enum CardState {
         case collapsed
         case expanded
-    }
-    
-    struct LayoutConstraintGroup {
-        var constraints: [NSLayoutConstraint]
-        var areActive: Bool = false {
-            didSet {
-                constraints.forEach({ $0.isActive = areActive })
-            }
-        }
-        
-        init() {
-            self.constraints = []
-        }
-        
-        init(constraints: [NSLayoutConstraint]) {
-            self.constraints = constraints
-        }
-        
-        init(constraints: NSLayoutConstraint...) {
-            self.constraints = constraints
-        }
-        
-        mutating func removeAll() {
-            constraints.removeAll()
-        }
-        
-        mutating func append(_ constraint: NSLayoutConstraint) {
-            constraints.append(constraint)
-        }
     }
     
     public typealias CardViewController = UIViewController & UIViewControllerCardTransition
@@ -53,7 +24,7 @@ open class CardTransitionTabBarController: UITabBarController {
     public var cardViewController: CardViewController?
     private var cardViewExpandedConstraint: NSLayoutConstraint?
     private var cardViewCollapsedConstraint: NSLayoutConstraint?
-    var cardViewCornerRadius: CGFloat = 5
+    public private(set) var cardViewCornerRadius: CGFloat = 5
     internal var cardViewDestinationY: CGFloat = 55.0
     
     private var animationProgressWhenInterrupted: CGFloat = 0.0
@@ -373,6 +344,7 @@ open class CardTransitionTabBarController: UITabBarController {
     }
     
     @objc func handleTapGestrue(gestureRecognizer: UITapGestureRecognizer) {
+        cardViewController?.didStartTransitionTo(state: isCardViewExpanded ? .collapsed : .expanded, fractionComplete: 0, animationDuration: transitionDuration)
         transitionIfNeededTo(state: isCardViewExpanded ? .collapsed : .expanded, duration: transitionDuration)
     }
     
@@ -401,12 +373,14 @@ open class CardTransitionTabBarController: UITabBarController {
             $0.pauseAnimation()
             animationProgressWhenInterrupted = $0.fractionComplete
         })
+        cardViewController?.didStartTransitionTo(state: state, fractionComplete: isCardViewExpanded ? 1.0 : 0, animationDuration: duration)
     }
     
     func updateTransition(fractionComplete: CGFloat) {
         animations.forEach({
             $0.fractionComplete = fractionComplete + animationProgressWhenInterrupted
         })
+        cardViewController?.updateTransition(fractionComplete: fractionComplete + animationProgressWhenInterrupted)
     }
     
     func continueTransition(fractionComplete: CGFloat) {
@@ -414,6 +388,7 @@ open class CardTransitionTabBarController: UITabBarController {
             $0.isReversed = fractionComplete <= animationThreshold
             $0.continueAnimation(withTimingParameters: nil, durationFactor: 0)
         })
+        cardViewController?.continueTransition(fractionComplete: fractionComplete, animationThreshold: animationThreshold)
     }
     
     func transitionIfNeededTo(state: CardState, duration: TimeInterval, completion: (() -> ())? = nil) {
@@ -457,6 +432,7 @@ open class CardTransitionTabBarController: UITabBarController {
             
             self.cardViewCollapsedConstraint?.isActive = !self.isCardViewExpanded
             self.previewingTabBarCollapsedConstraintGroup.areActive = !self.isCardViewExpanded
+            self.cardViewController?.didEndTransitionTo(state: state, fractionComplete: self.isCardViewExpanded ? 1.0 : 0.0, animationThreshold: self.animationThreshold)
         }
         frameAnimator.startAnimation()
         animations.append(frameAnimator)
@@ -553,22 +529,4 @@ open class CardTransitionTabBarController: UITabBarController {
     
 }
 
-
-public protocol UIViewControllerCardTransition {
-    
-    var previewingViewController: UIViewController! { get set }
-    var previewingViewHeight: CGFloat { get }
-    var statusBarStyle: UIStatusBarStyle { get set }
-}
-
-open class FlexibleTabBar: UITabBar {
-    
-    override open var traitCollection: UITraitCollection {
-        if UIDevice.current.userInterfaceIdiom == .pad && UIDevice.current.orientation.isPortrait {
-            return UITraitCollection(horizontalSizeClass: .compact)
-        }
-        return super.traitCollection
-    }
-    
-}
 
