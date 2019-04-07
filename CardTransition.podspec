@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'CardTransition'
-  s.version          = '1.0.1'
+  s.version          = '1.1.0'
   s.summary          = 'An example of an interactive card UI with UITabBarController like Apple Music app.'
 
 # This description is used to generate tags and improve search results.
