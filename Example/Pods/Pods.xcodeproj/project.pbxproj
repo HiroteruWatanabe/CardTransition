@@ -87,6 +87,9 @@
 		9034E4741A16C2C97B613074071A2A10 /* AllPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26D7B54C77385B78FFA011C64D94E436 /* AllPass.swift */; settings = {COMPILER_FLAGS = "-DPRODUCT_NAME=Nimble/Nimble"; }; };
 		92960264FF1BBE8819D4E2A6E81B6477 /* BeLessThanOrEqual.swift in Sources */ = {isa = PBXBuildFile; fileRef = B54E8617109E65C3B975FE6AB81F0562 /* BeLessThanOrEqual.swift */; settings = {COMPILER_FLAGS = "-DPRODUCT_NAME=Nimble/Nimble"; }; };
 		946509CF7ECF52544DA19AB8855F428E /* Callsite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C9E93FDAF76CEA15A9E23CC159DED1 /* Callsite.swift */; };
+		9871FE22225B7100006A2CF1 /* ButterflyHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9871FE21225B70FF006A2CF1 /* ButterflyHandle.swift */; };
+		9871FE25225B7117006A2CF1 /* UIViewControllerCardTransitionable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9871FE23225B7117006A2CF1 /* UIViewControllerCardTransitionable.swift */; };
+		9871FE26225B7117006A2CF1 /* CardTransitionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9871FE24225B7117006A2CF1 /* CardTransitionViewController.swift */; };
 		98E2261A225A57D7005D446C /* FlexibleTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E22617225A57D6005D446C /* FlexibleTabBar.swift */; };
 		98E2261B225A57D7005D446C /* LayoutConstraintGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E22618225A57D6005D446C /* LayoutConstraintGroup.swift */; };
 		98E2261C225A57D7005D446C /* UIViewControllerCardTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E22619225A57D6005D446C /* UIViewControllerCardTransition.swift */; };
@@ -259,6 +262,9 @@
 		8F4384CDA1479E6D88E3486B78FD7485 /* MatcherProtocols.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MatcherProtocols.swift; path = Sources/Nimble/Matchers/MatcherProtocols.swift; sourceTree = "<group>"; };
 		9245B48A46AAC45502A6B8A2AB745038 /* HooksPhase.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HooksPhase.swift; path = Sources/Quick/Hooks/HooksPhase.swift; sourceTree = "<group>"; };
 		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9871FE21225B70FF006A2CF1 /* ButterflyHandle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ButterflyHandle.swift; path = CardTransition/Classes/ButterflyHandle.swift; sourceTree = "<group>"; };
+		9871FE23225B7117006A2CF1 /* UIViewControllerCardTransitionable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIViewControllerCardTransitionable.swift; path = CardTransition/Classes/UIViewControllerCardTransitionable.swift; sourceTree = "<group>"; };
+		9871FE24225B7117006A2CF1 /* CardTransitionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CardTransitionViewController.swift; path = CardTransition/Classes/CardTransitionViewController.swift; sourceTree = "<group>"; };
 		98E22617225A57D6005D446C /* FlexibleTabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FlexibleTabBar.swift; path = CardTransition/Classes/FlexibleTabBar.swift; sourceTree = "<group>"; };
 		98E22618225A57D6005D446C /* LayoutConstraintGroup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LayoutConstraintGroup.swift; path = CardTransition/Classes/LayoutConstraintGroup.swift; sourceTree = "<group>"; };
 		98E22619225A57D6005D446C /* UIViewControllerCardTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIViewControllerCardTransition.swift; path = CardTransition/Classes/UIViewControllerCardTransition.swift; sourceTree = "<group>"; };
@@ -593,6 +599,9 @@
 				98E22617225A57D6005D446C /* FlexibleTabBar.swift */,
 				98E22618225A57D6005D446C /* LayoutConstraintGroup.swift */,
 				98E22619225A57D6005D446C /* UIViewControllerCardTransition.swift */,
+				9871FE24225B7117006A2CF1 /* CardTransitionViewController.swift */,
+				9871FE23225B7117006A2CF1 /* UIViewControllerCardTransitionable.swift */,
+				9871FE21225B70FF006A2CF1 /* ButterflyHandle.swift */,
 				257A0FD7787831CD8DF96589A2FBEB07 /* Pod */,
 				501333D272A88D12533886DBB9FAC98F /* Support Files */,
 			);
@@ -996,6 +1005,9 @@
 				5776FBAE20248923104B756E3289CDE0 /* CardTransition-dummy.m in Sources */,
 				98E2261A225A57D7005D446C /* FlexibleTabBar.swift in Sources */,
 				98E2261B225A57D7005D446C /* LayoutConstraintGroup.swift in Sources */,
+				9871FE22225B7100006A2CF1 /* ButterflyHandle.swift in Sources */,
+				9871FE25225B7117006A2CF1 /* UIViewControllerCardTransitionable.swift in Sources */,
+				9871FE26225B7117006A2CF1 /* CardTransitionViewController.swift in Sources */,
 				D670E9137ADC20D5D9E49A900B068456 /* CardTransitionTabBarController.swift in Sources */,
 				98E2261C225A57D7005D446C /* UIViewControllerCardTransition.swift in Sources */,
 			);

@@ -9,9 +9,9 @@
 import UIKit
 import CardTransition
 
-class CardViewController: UIViewController {
+class SampleCardViewController: UIViewController {
     
-    var previewingViewController: UIViewController!
+    var previewingViewController: UIViewController?
     var sampleViewCollapsedConstraintGroup = LayoutConstraintGroup()
     var sampleViewExpandedConstraintGroup = LayoutConstraintGroup()
     var animator: UIViewPropertyAnimator?
@@ -40,7 +40,7 @@ class CardViewController: UIViewController {
         sampleViewCollapsedConstraintGroup.append(collapsedWidthConstraint)
         sampleView.heightAnchor.constraint(equalTo: sampleView.widthAnchor, multiplier: 1.0).isActive = true
         
-        sampleViewCollapsedConstraintGroup.areActive = true
+        sampleViewCollapsedConstraintGroup.isActive = true
         
         let expandedWidthConstraint = sampleView.widthAnchor.constraint(equalToConstant: 240)
         sampleViewExpandedConstraintGroup.append(expandedWidthConstraint)
@@ -58,21 +58,34 @@ class CardViewController: UIViewController {
         }
     }
     
+    @IBAction func touchedUpInsideButton(_ sender: UIButton) {
+        guard let tabBarController = tabBarController as? CardTransitionTabBarController else { return }
+        tabBarController.removeCardViewController(animated: true)
+    }
+    
+    @IBAction func touchedUpInsideButton2(_ sender: UIButton) {
+        guard let tabBarController = tabBarController as? SampleCardTransitionTabBarController else { return }
+        if let _ = tabBarController.bannerView {
+            tabBarController.removeBannerView()
+        } else {
+            tabBarController.setupBannerView()
+        }
+    }
 }
 
-extension CardViewController: UIViewControllerCardTransition {
+extension SampleCardViewController: UIViewControllerCardTransitionable {
     
-    func didStartTransitionTo(state: CardTransitionTabBarController.CardState, fractionComplete: CGFloat, animationDuration: TimeInterval) {
+    func didStartTransitionTo(state: CardState, fractionComplete: CGFloat, animationDuration: TimeInterval) {
         self.animator?.stopAnimation(true)
         let animator = UIViewPropertyAnimator(duration: animationDuration, dampingRatio: 1) {
             switch state {
             case .collapsed:
-                self.sampleViewCollapsedConstraintGroup.areActive = true
-                self.sampleViewExpandedConstraintGroup.areActive = false
+                self.sampleViewExpandedConstraintGroup.isActive = false
+                self.sampleViewCollapsedConstraintGroup.isActive = true
                 
             case .expanded:
-                self.sampleViewCollapsedConstraintGroup.areActive = false
-                self.sampleViewExpandedConstraintGroup.areActive = true
+                self.sampleViewCollapsedConstraintGroup.isActive = false
+                self.sampleViewExpandedConstraintGroup.isActive = true
             }
             
             self.view.layoutIfNeeded()
@@ -81,13 +94,13 @@ extension CardViewController: UIViewControllerCardTransition {
         self.animator = animator
     }
     
-    func didEndTransitionTo(state: CardTransitionTabBarController.CardState, fractionComplete: CGFloat, animationThreshold: CGFloat) {
+    func didEndTransitionTo(state: CardState, fractionComplete: CGFloat, animationThreshold: CGFloat) {
         animator?.fractionComplete = fractionComplete
         animator?.isReversed = fractionComplete <= animationThreshold
         animator?.continueAnimation(withTimingParameters: nil, durationFactor: 0)
     }
     
-    func updateTransition(fractionComplete: CGFloat) {
+    func didUpdateTransition(fractionComplete: CGFloat) {
         animator?.pauseAnimation()
         animator?.fractionComplete = fractionComplete
     }
@@ -96,5 +109,5 @@ extension CardViewController: UIViewControllerCardTransition {
         animator?.isReversed = fractionComplete <= animationThreshold
         animator?.continueAnimation(withTimingParameters: nil, durationFactor: 0)
     }
-
+    
 }

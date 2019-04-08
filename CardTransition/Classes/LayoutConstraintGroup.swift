@@ -9,9 +9,9 @@ import Foundation
 
 public struct LayoutConstraintGroup {
     public var constraints: [NSLayoutConstraint]
-    public var areActive: Bool = false {
+    public var isActive: Bool = false {
         didSet {
-            constraints.forEach({ $0.isActive = areActive })
+            constraints.forEach({ $0.isActive = isActive })
         }
     }
     

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Tc3-Dw-FIs">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Sample Card Transition View Controller-->
+        <scene sceneID="PSI-pa-aGs">
+            <objects>
+                <viewController id="Tc3-Dw-FIs" customClass="SampleCardTransitionViewController" customModule="CardTransition_Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="CYf-n9-ae2">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="paK-Mx-Tde">
+                                <rect key="frame" x="142.5" y="260" width="90" height="90"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="90" id="Cj1-ed-ur9"/>
+                                    <constraint firstAttribute="height" constant="90" id="cji-Cg-UXC"/>
+                                </constraints>
+                                <state key="normal" title="Button"/>
+                                <connections>
+                                    <action selector="touchedUpInsideButton:" destination="Tc3-Dw-FIs" eventType="touchUpInside" id="UI6-hI-BdG"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="paK-Mx-Tde" firstAttribute="centerX" secondItem="CYf-n9-ae2" secondAttribute="centerX" id="71W-EM-oPi"/>
+                            <constraint firstItem="paK-Mx-Tde" firstAttribute="top" secondItem="lBR-df-2bO" secondAttribute="top" constant="240" id="Hx6-zN-cLo"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="lBR-df-2bO"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="QGN-b2-To3" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="132" y="186"/>
+        </scene>
+    </scenes>
+</document>
