@@ -12,6 +12,7 @@ public protocol UIViewControllerCardTransitionable {
     var previewingViewController: UIViewController? { get set }
     var previewingViewHeight: CGFloat { get }
     var statusBarStyle: UIStatusBarStyle { get set }
+    var isExpanded: Bool { get set }
     
     func didStartTransitionTo(state: CardState, fractionComplete: CGFloat, animationDuration: TimeInterval)
     func didEndTransitionTo(state: CardState, fractionComplete: CGFloat, animationThreshold: CGFloat)

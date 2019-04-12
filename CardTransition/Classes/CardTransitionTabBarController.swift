@@ -10,7 +10,23 @@ import UIKit
 
 open class CardTransitionTabBarController: UITabBarController, UIViewControllerCardTransition {
     
-    public var isCardViewExpanded: Bool = false
+    override open var viewControllers: [UIViewController]? {
+        set {
+            guard let cardViewController = cardViewController else { return super.viewControllers = newValue }
+            super.viewControllers = newValue?.filter({ $0 != cardViewController })
+        }
+        get {
+            guard let cardViewController = cardViewController else { return super.viewControllers }
+            return super.viewControllers?.filter({ $0 != cardViewController })
+        }
+    }
+    
+    public var isCardViewExpanded: Bool = false {
+        didSet {
+            cardViewController?.isExpanded = isCardViewExpanded
+            gestureResponder?.isUserInteractionEnabled = isCardViewExpanded
+        }
+    }
     public var animationThreshold: CGFloat = 0.1
     public private(set) var animationProgressWhenInterrupted: CGFloat = 0.0
     public var transitionDuration: TimeInterval = 0.3
@@ -65,7 +81,7 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
     private var longPressGestureStartPoint: CGPoint = .zero
     public var hidesPreviewingViewWhenExpanded: Bool = true
     public var gestureResponder: UIView?
-    public private(set) var previewingViewHeight: CGFloat = 44
+    public var cardViewPreviewingViewHeight: CGFloat = 44
     
     // MARK: Properties TabBar
     public var flexibleTabBar: FlexibleTabBar!
@@ -120,15 +136,25 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
     
     override open func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
         guard tabBar == flexibleTabBar else { return }
-        for i in 0..<(tabBar.items?.count ?? 0) {
-            if self.tabBar.items?[i].tag == item.tag {
+        guard let items = tabBar.items else { return }
+        for i in 0..<items.count {
+            if items[i].tag == item.tag {
                 selectedIndex = i
                 return
             }
         }
     }
     
+    override open func addChild(_ childController: UIViewController) {
+        let viewControllers = self.viewControllers
+        super.addChild(childController)
+        if childController == cardViewController {
+            self.viewControllers = viewControllers
+        }
+    }
+    
     override open func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.willTransition(to: newCollection, with: coordinator)
         if traitCollection.horizontalSizeClass != newCollection.horizontalSizeClass {
             guard let cardViewController = cardViewController else { return }
             temporaryRemoveCardViewController()
@@ -146,9 +172,9 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
             let previewingView = cardViewController.previewingViewController?.view {
             previewingView.layoutIfNeeded()
             if isHorizontalSizeClassRegular {
-                previewingViewHeight = max(cardViewController.previewingViewHeight, tabBar.frame.height)
+                cardViewPreviewingViewHeight = max(cardViewController.previewingViewHeight, tabBar.frame.height)
             } else {
-                previewingViewHeight = cardViewController.previewingViewHeight
+                cardViewPreviewingViewHeight = cardViewController.previewingViewHeight
             }
         }
         
@@ -160,9 +186,12 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
             }
             updateCardViewCornerRadius()
             setupCardViewShadow()
+            if isCardViewExpanded {
+                cardViewController?.didStartTransitionTo(state: .expanded, fractionComplete: 1, animationDuration: 0)
+            }
         }
         
-        previewingBackgroundTabBarHeightConstraint?.constant = previewingViewHeight
+        previewingBackgroundTabBarHeightConstraint?.constant = cardViewPreviewingViewHeight
         
         previewingTabBar.layoutIfNeeded()
         previewingBackgroundTabBar?.layoutIfNeeded()
@@ -171,6 +200,10 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
             expandedViewCornerRadius = 0
         } else {
             expandedViewCornerRadius = 5
+        }
+        
+        if isCardViewExpanded, let selectedViewController = selectedViewController {
+            roundCorner(view: selectedViewController.view, cornerRadius: expandedViewCornerRadius)
         }
         
     }
@@ -255,7 +288,7 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
             previewingTabBarConstraints.append(collapsedBottomConstraint)
             previewingTabBarCollapsedConstraintGroup.append(collapsedBottomConstraint)
             
-            let collapsedHeightConstraint = previewingTabBar.heightAnchor.constraint(equalToConstant: previewingViewHeight + tabBar.frame.height)
+            let collapsedHeightConstraint = previewingTabBar.heightAnchor.constraint(equalToConstant: cardViewPreviewingViewHeight + tabBar.frame.height)
             previewingTabBarCollapsedConstraintGroup.append(collapsedHeightConstraint)
             previewingTabBarConstraints.append(collapsedHeightConstraint)
             
@@ -364,6 +397,8 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
     
     private func updateFlexibleTabBarItems() {
         var itemsForFlexibleTabBar: [UITabBarItem] = []
+        let a = viewControllers
+        let ji = tabBar.items
         for (index, item) in (tabBar.items ?? []).enumerated() {
             guard (viewControllers?.count ?? 0) > index else { break }
             guard viewControllers?[index] != cardViewController else { continue }
@@ -386,6 +421,7 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
     
     private func setupPreviewingBackgroundTabBar() {
         guard let previewingView = cardViewController?.previewingViewController?.view else { return }
+        previewingView.backgroundColor = .clear
         self.previewingBackgroundTabBar?.removeFromSuperview()
         let previewingBackgroundTabBar = UITabBar()
         previewingBackgroundTabBar.layer.borderWidth = 0
@@ -398,13 +434,14 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
         previewingBackgroundTabBar.topAnchor.constraint(equalTo: previewingView.topAnchor).isActive = true
         previewingBackgroundTabBar.leadingAnchor.constraint(equalTo: previewingView.leadingAnchor).isActive = true
         previewingBackgroundTabBar.trailingAnchor.constraint(equalTo: previewingView.trailingAnchor).isActive = true
-        previewingBackgroundTabBar.heightAnchor.constraint(equalToConstant: previewingViewHeight).isActive = true
+        previewingBackgroundTabBar.heightAnchor.constraint(equalToConstant: cardViewPreviewingViewHeight).isActive = true
         previewingBackgroundTabBarHeightConstraint?.isActive = true
     }
     
     open func setupCardViewShadow() {
         if isCardViewShadowHidden || isHorizontalSizeClassRegular {
             previewingTabBar.layer.shadowOpacity = 0.0
+            previewingTabBar.clipsToBounds = false
         } else {
             previewingTabBar.layer.shadowColor = UIColor.black.cgColor
             previewingTabBar.layer.shadowOffset = .zero
@@ -416,13 +453,13 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
     
     open func setCardViewController(_ cardViewController: CardViewController, isExpanded: Bool) {
         guard let previewingView = cardViewController.previewingViewController?.view else { return }
+        self.cardViewController = cardViewController
         addChild(cardViewController)
         
-        self.cardViewController = cardViewController
         if isHorizontalSizeClassRegular {
-            previewingViewHeight = max(cardViewController.previewingViewHeight, tabBar.frame.height)
+            cardViewPreviewingViewHeight = max(cardViewController.previewingViewHeight, tabBar.frame.height)
         } else {
-            previewingViewHeight = cardViewController.previewingViewHeight
+            cardViewPreviewingViewHeight = cardViewController.previewingViewHeight
         }
         isCardViewExpanded = isExpanded
         setupPreviewingTabBar()
@@ -438,6 +475,7 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
         cardViewController.didMove(toParent: self)
         setupGestureRecognizers(view: previewingView)
         setupGestureResponder()
+        gestureResponder?.isUserInteractionEnabled = isCardViewExpanded
         
         view.bringSubviewToFront(flexibleTabBar)
         setupCardViewShadow()
@@ -456,8 +494,8 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
         cardViewController.view.trailingAnchor.constraint(equalTo: previewingTabBar.trailingAnchor).isActive = true
         
         cardViewController.view.topAnchor.constraint(equalTo: previewingTabBar.topAnchor).isActive = true
-        cardViewCollapsedConstraint = cardViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
-        cardViewExpandedConstraint = cardViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
+        cardViewCollapsedConstraint = cardViewController.view.heightAnchor.constraint(equalToConstant: cardViewController.view.frame.height)
+        cardViewExpandedConstraint = cardViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         
         if isCardViewExpanded {
             cardViewExpandedConstraint?.isActive = true
@@ -559,7 +597,7 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
     
     @objc public func handlePanGesture(gestureRecognizer: UIPanGestureRecognizer) {
         let translation = gestureRecognizer.translation(in: cardViewController?.previewingViewController?.view)
-        var fractionComplete = translation.y / (view.bounds.height - previewingViewHeight)
+        var fractionComplete = translation.y / (view.bounds.height - cardViewPreviewingViewHeight)
         fractionComplete = abs(fractionComplete)
         switch gestureRecognizer.state {
         case .began:
@@ -577,7 +615,7 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
         
         let location = gestureRecognizer.location(in: view)
         let translation = CGPoint(x: location.x - longPressGestureStartPoint.x, y: location.y - longPressGestureStartPoint.y)
-        var fractionComplete = translation.y / (view.bounds.height - previewingViewHeight)
+        var fractionComplete = translation.y / (view.bounds.height - cardViewPreviewingViewHeight)
         fractionComplete = abs(fractionComplete)
         switch gestureRecognizer.state {
         case .began:

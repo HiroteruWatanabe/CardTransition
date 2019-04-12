@@ -14,7 +14,11 @@ open class CardTransitionViewController: UIViewController, UIViewControllerCardT
         case fixed
     }
     
-    public var isCardViewExpanded: Bool = false
+    public var isCardViewExpanded: Bool = false {
+        didSet {
+            cardViewController?.isExpanded = isCardViewExpanded
+        }
+    }
     public var animationThreshold: CGFloat = 0.1
     public private(set) var animationProgressWhenInterrupted: CGFloat = 0.0
     public var transitionDuration: TimeInterval = 0.3
@@ -50,7 +54,7 @@ open class CardTransitionViewController: UIViewController, UIViewControllerCardT
     
     public var cardViewDestinationY: CGFloat = 55.0
     public var butterflyHandle: ButterflyHandle?
-    public private(set) var previewingViewHeight: CGFloat = 44
+    public private(set) var cardViewPreviewingViewHeight: CGFloat = 44
     public var hidesPreviewingViewWhenExpanded: Bool = true
     public var gestureResponder: UIView?
     
@@ -93,7 +97,7 @@ open class CardTransitionViewController: UIViewController, UIViewControllerCardT
         
         addChild(cardViewController)
         
-        previewingViewHeight = cardViewController.previewingViewHeight
+        cardViewPreviewingViewHeight = cardViewController.previewingViewHeight
         
         let butterflyHandle = ButterflyHandle()
         self.butterflyHandle = butterflyHandle
@@ -188,7 +192,7 @@ open class CardTransitionViewController: UIViewController, UIViewControllerCardT
     
     @objc public func handlePanGesture(gestureRecognizer: UIPanGestureRecognizer) {
         let translation = gestureRecognizer.translation(in: cardViewController?.previewingViewController?.view)
-        var fractionComplete = translation.y / (view.bounds.height - previewingViewHeight)
+        var fractionComplete = translation.y / (view.bounds.height - cardViewPreviewingViewHeight)
         fractionComplete = abs(fractionComplete)
         switch gestureRecognizer.state {
         case .began:
