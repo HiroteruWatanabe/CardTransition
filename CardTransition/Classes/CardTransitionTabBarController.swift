@@ -595,7 +595,7 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
         transitionIfNeededTo(state: isCardViewExpanded ? .collapsed : .expanded, duration: transitionDuration)
     }
     
-    @objc public func handlePanGesture(gestureRecognizer: UIPanGestureRecognizer) {
+    @objc open func handlePanGesture(gestureRecognizer: UIPanGestureRecognizer) {
         let translation = gestureRecognizer.translation(in: cardViewController?.previewingViewController?.view)
         var fractionComplete = translation.y / (view.bounds.height - cardViewPreviewingViewHeight)
         fractionComplete = abs(fractionComplete)
@@ -611,7 +611,7 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
         }
     }
     
-    @objc public func handleLongPressGesture(gestureRecognizer: UILongPressGestureRecognizer) {
+    @objc open func handleLongPressGesture(gestureRecognizer: UILongPressGestureRecognizer) {
         
         let location = gestureRecognizer.location(in: view)
         let translation = CGPoint(x: location.x - longPressGestureStartPoint.x, y: location.y - longPressGestureStartPoint.y)
