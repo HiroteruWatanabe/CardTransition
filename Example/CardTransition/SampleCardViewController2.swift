@@ -10,6 +10,7 @@ import UIKit
 import CardTransition
 
 class SampleCardViewController2: CardViewController {
+    var isExpanded: Bool = false
     
     var previewingViewController: UIViewController?
     

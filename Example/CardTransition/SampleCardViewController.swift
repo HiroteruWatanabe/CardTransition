@@ -11,6 +11,7 @@ import CardTransition
 
 class SampleCardViewController: UIViewController {
     
+    var isExpanded: Bool = false
     var previewingViewController: UIViewController?
     var sampleViewCollapsedConstraintGroup = LayoutConstraintGroup()
     var sampleViewExpandedConstraintGroup = LayoutConstraintGroup()
@@ -74,7 +75,6 @@ class SampleCardViewController: UIViewController {
 }
 
 extension SampleCardViewController: UIViewControllerCardTransitionable {
-    
     func didStartTransitionTo(state: CardState, fractionComplete: CGFloat, animationDuration: TimeInterval) {
         self.animator?.stopAnimation(true)
         let animator = UIViewPropertyAnimator(duration: animationDuration, dampingRatio: 1) {

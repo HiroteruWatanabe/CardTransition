@@ -145,6 +145,11 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
         }
     }
     
+    override open func setViewControllers(_ viewControllers: [UIViewController]?, animated: Bool) {
+        super.setViewControllers(viewControllers, animated: animated)
+        updateFlexibleTabBarItems()
+    }
+    
     override open func addChild(_ childController: UIViewController) {
         let viewControllers = self.viewControllers
         super.addChild(childController)
@@ -228,7 +233,6 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
     }
     
     private func setupPreviewingTabBar() {
-        
         if let previewingTabBar = self.previewingTabBar {
             previewingTabBar.removeFromSuperview()
         }
@@ -397,8 +401,6 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
     
     private func updateFlexibleTabBarItems() {
         var itemsForFlexibleTabBar: [UITabBarItem] = []
-        let a = viewControllers
-        let ji = tabBar.items
         for (index, item) in (tabBar.items ?? []).enumerated() {
             guard (viewControllers?.count ?? 0) > index else { break }
             guard viewControllers?[index] != cardViewController else { continue }
