@@ -591,7 +591,7 @@ open class CardTransitionTabBarController: UITabBarController, UIViewControllerC
         cardView.layer.cornerRadius = cardViewCornerRadius
     }
     
-    @objc public func handleTapGestrue(gestureRecognizer: UITapGestureRecognizer) {
+    @objc open func handleTapGestrue(gestureRecognizer: UITapGestureRecognizer) {
         butterflyHandle?.setSelected(true, animated: false)
         cardViewController?.didStartTransitionTo(state: isCardViewExpanded ? .collapsed : .expanded, fractionComplete: 0, animationDuration: transitionDuration)
         transitionIfNeededTo(state: isCardViewExpanded ? .collapsed : .expanded, duration: transitionDuration)
