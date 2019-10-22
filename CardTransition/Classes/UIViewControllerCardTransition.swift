@@ -32,7 +32,6 @@ public protocol UIViewControllerCardTransition {
     var cardViewCornerRadius: CGFloat { get }
     var cardViewCollapsedCornerRadius: CGFloat { get }
     var cardViewExpandedCornerRadius: CGFloat { get }
-    var cardViewDestinationY: CGFloat { get }
     var butterflyHandle: ButterflyHandle? { get }
     var hidesPreviewingViewWhenExpanded: Bool { get set }
     var gestureResponder: UIView? { get }

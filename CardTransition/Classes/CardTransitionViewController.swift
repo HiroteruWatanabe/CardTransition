@@ -51,10 +51,8 @@ open class CardTransitionViewController: UIViewController, UIViewControllerCardT
             updateCardViewCornerRadius()
         }
     }
-    
-    public var cardViewDestinationY: CGFloat = 55.0
+
     public var butterflyHandle: ButterflyHandle?
-    public private(set) var cardViewPreviewingViewHeight: CGFloat = 44
     public var hidesPreviewingViewWhenExpanded: Bool = true
     public var gestureResponder: UIView?
     
@@ -85,19 +83,13 @@ open class CardTransitionViewController: UIViewController, UIViewControllerCardT
         cardViewHeightStyle = heightStyle
         cardViewCollapsedHeight = collapsedHeight
         cardViewExpandedHeight = expandedHeight
-        if cardViewController.view.frame.height <= view.frame.height - cardViewDestinationY {
-            cardViewDestinationY = view.frame.height - cardViewController.view.frame.height
-        } else {
-            cardViewDestinationY = 55.0
-        }
+
         self.cardViewController = cardViewController
         cardViewController.view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         cardViewController.view.layer.masksToBounds = true
         cardViewController.view.layer.cornerRadius = cardViewCornerRadius
         
         addChild(cardViewController)
-        
-        cardViewPreviewingViewHeight = cardViewController.previewingViewHeight
         
         let butterflyHandle = ButterflyHandle()
         self.butterflyHandle = butterflyHandle
@@ -191,9 +183,9 @@ open class CardTransitionViewController: UIViewController, UIViewControllerCardT
     }
     
     @objc public func handlePanGesture(gestureRecognizer: UIPanGestureRecognizer) {
-        let translation = gestureRecognizer.translation(in: cardViewController?.previewingViewController?.view)
-        var fractionComplete = translation.y / (view.bounds.height - cardViewPreviewingViewHeight)
-        fractionComplete = abs(fractionComplete)
+        let translation = gestureRecognizer.translation(in: cardViewController?.view)
+        var fractionComplete = translation.y / (cardViewExpandedHeight - cardViewCollapsedHeight)
+        fractionComplete = max(min(abs(fractionComplete), 1), 0)
         switch gestureRecognizer.state {
         case .began:
             startTransitionTo(state: isCardViewExpanded ? .collapsed : .expanded, duration: transitionDuration)
@@ -244,25 +236,27 @@ open class CardTransitionViewController: UIViewController, UIViewControllerCardT
         
         animations = []
         
-        let frameAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1) {
+        switch state {
+        case .expanded:
+            cardViewCollapsedConstraint?.isActive = false
+            cardViewExpandedConstraint?.isActive = true
+        case .collapsed:
+            cardViewExpandedConstraint?.isActive = false
+            cardViewCollapsedConstraint?.isActive = true
+        }
+        
+        let frameAnimator = UIViewPropertyAnimator(duration: duration, curve: .linear) {
             switch state {
             case .expanded:
-                self.cardViewCollapsedConstraint?.isActive = false
-                self.cardViewExpandedConstraint?.isActive = true
                 if self.hidesPreviewingViewWhenExpanded {
                     self.cardViewController?.previewingViewController?.view.alpha = 0
                 }
                 self.cardViewController?.view.layer.cornerRadius = self.cardViewExpandedCornerRadius
-                self.view.layoutIfNeeded()
-                
             case .collapsed:
-                self.cardViewExpandedConstraint?.isActive = false
-                self.cardViewCollapsedConstraint?.isActive = true
                 self.cardViewController?.previewingViewController?.view.alpha = 1
                 self.cardViewController?.view.layer.cornerRadius = self.cardViewCollapsedCornerRadius
-                self.view.layoutIfNeeded()
-                
             }
+            self.view.layoutIfNeeded()
         }
         frameAnimator.addCompletion { (position) in
             switch state {
@@ -286,6 +280,5 @@ open class CardTransitionViewController: UIViewController, UIViewControllerCardT
         }
         frameAnimator.startAnimation()
         animations.append(frameAnimator)
-        
     }
 }
