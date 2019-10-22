@@ -18,6 +18,9 @@ profile
 DerivedData
 *.hmap
 *.ipa
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcworkspace/contents.xcworkspacedata
 
 # Bundler
 .bundle
